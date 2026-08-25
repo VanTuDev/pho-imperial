@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Imperial Lotus Noir palette */
+  --color-background: #131313;
+  --color-surface: #131313;
+  --color-surface-dim: #131313;
+  --color-surface-bright: #3a3939;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353534;
+
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #d0c5af;
+  --color-on-background: #e5e2e1;
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-on-surface: #313030;
+
+  --color-outline: #99907c;
+  --color-outline-variant: #4d4635;
+
+  --color-primary: #f2ca50;
+  --color-on-primary: #3c2f00;
+  --color-primary-container: #d4af37;
+  --color-on-primary-container: #554300;
+  --color-primary-fixed: #ffe088;
+  --color-primary-fixed-dim: #e9c349;
+
+  --color-secondary: #e5c272;
+  --color-on-secondary: #3f2e00;
+  --color-secondary-container: #604800;
+  --color-on-secondary-container: #dab869;
+
+  --color-tertiary: #f2cc00;
+  --color-on-tertiary: #3a3000;
+  --color-tertiary-container: #d2b100;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+
+  /* Typography */
+  --font-display: var(--font-eb-garamond), "EB Garamond", serif;
+  --font-body: var(--font-manrope), "Manrope", sans-serif;
+
+  /* Spacing rhythm (8px base unit) */
+  --spacing-gutter: 24px;
+  --spacing-margin-mobile: 20px;
+  --spacing-section: 80px;
+
+  /* Sharp, architectural corners per design system */
+  --radius-none: 0px;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.container-imperial {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+/* Gold-foil shimmer sweep for hero headline */
+.gold-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.gold-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(
+    to right,
+    rgba(242, 202, 80, 0) 0%,
+    rgba(242, 202, 80, 0.12) 50%,
+    rgba(242, 202, 80, 0) 100%
+  );
+  transform: rotate(45deg);
+  animation: shimmer 3.5s infinite linear;
+  pointer-events: none;
+}
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
+/* Faint etched bamboo motif used as a section backdrop */
+.bamboo-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0 L15 100 M90 0 L85 100 M20 20 L30 10 L40 20 M70 80 L80 90 L90 80' stroke='%23f2ca50' stroke-width='0.5' fill='none' opacity='0.2'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+/* Corner brackets that "frame" a precious element */
+.ornamental-border {
+  border: 1px solid var(--color-primary);
+  position: relative;
+}
+.ornamental-border::before,
+.ornamental-border::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--color-primary);
+}
+.ornamental-border::before {
+  top: -5px;
+  left: -5px;
+  border-right: none;
+  border-bottom: none;
+}
+.ornamental-border::after {
+  bottom: -5px;
+  right: -5px;
+  border-left: none;
+  border-top: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Floating cart slide-in */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
