@@ -1,26 +1,36 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { SiteHeader } from "@/components/site-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { OrderPageClient } from "@/components/order/order-page-client";
+import { getDictionary } from "@/i18n/dictionaries";
+import { defaultLocale, isLocale, LOCALE_COOKIE } from "@/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Меню | PHỞ IMPERIAL",
-  description:
-    "Полное меню ресторана PHỞ IMPERIAL. Выберите блюда и оформите заказ онлайн.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await cookies();
+  const value = store.get(LOCALE_COOKIE)?.value;
+  const dict = getDictionary(isLocale(value) ? value : defaultLocale);
+  return {
+    title: `${dict.menu.title} | PHỞ IMPERIAL`,
+    description: dict.menu.subtitle,
+  };
+}
 
-export default function OrderPage() {
+export default async function OrderPage({ searchParams }: PageProps<"/order">) {
+  const params = await searchParams;
+  const rawTable = params.table;
+  const initialTable = typeof rawTable === "string" ? rawTable : null;
+
   return (
     <div className="relative min-h-screen bg-background pb-32">
-      {/* Decorative background overlay */}
       <div className="pointer-events-none fixed inset-0 z-[-1] opacity-5">
         <div className="bamboo-pattern absolute inset-0 opacity-20 mix-blend-screen" />
       </div>
 
       <SiteHeader />
 
-      <main className="container-imperial w-full flex-grow px-[20px] pt-24">
-        <OrderPageClient />
+      <main className="container-imperial w-full px-margin-mobile pt-20">
+        <OrderPageClient initialTable={initialTable} />
       </main>
 
       <BottomNav />

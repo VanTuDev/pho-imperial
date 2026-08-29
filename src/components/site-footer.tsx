@@ -1,11 +1,17 @@
-const footerLinks = [
-  { href: "#privacy", label: "Privacy Policy" },
-  { href: "#terms", label: "Terms of Service" },
-  { href: "#booking", label: "Booking" },
-  { href: "#press", label: "Press Kit" },
+"use client";
+
+import { useTranslations, type MessageKey } from "@/i18n/provider";
+
+const footerLinks: { href: string; key: MessageKey }[] = [
+  { href: "#privacy", key: "footer.privacy" },
+  { href: "#terms", key: "footer.terms" },
+  { href: "#booking", key: "footer.booking" },
+  { href: "#press", key: "footer.press" },
 ];
 
 export function SiteFooter() {
+  const t = useTranslations();
+
   return (
     <footer
       id="contact"
@@ -13,7 +19,7 @@ export function SiteFooter() {
     >
       <div className="font-display text-2xl text-primary">Phở Imperial</div>
       <div className="font-body text-sm text-primary-fixed-dim">
-        © 2026 Phở Imperial. Premium Vietnamese Cuisine in Russia.
+        {t("footer.rights", { year: new Date().getFullYear() })}
       </div>
       <div className="flex flex-col gap-2">
         {footerLinks.map((link) => (
@@ -22,7 +28,7 @@ export function SiteFooter() {
             href={link.href}
             className="font-body text-xs uppercase tracking-widest text-on-surface-variant opacity-80 transition-opacity hover:text-primary hover:opacity-100"
           >
-            {link.label}
+            {t(link.key)}
           </a>
         ))}
       </div>

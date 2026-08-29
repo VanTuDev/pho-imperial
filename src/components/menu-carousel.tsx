@@ -3,11 +3,14 @@
 import Image from "next/image";
 import { useCallback, useRef, useState, type TouchEvent } from "react";
 import { menuPages } from "@/data/menu-pages";
+import { useI18n } from "@/i18n/provider";
+import { pick } from "@/i18n/localized";
 import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 const SWIPE_THRESHOLD = 40;
 
 export function MenuCarousel() {
+  const { locale, t } = useI18n();
   const [index, setIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const total = menuPages.length;
@@ -17,7 +20,7 @@ export function MenuCarousel() {
     (next: number) => {
       setIndex(((next % total) + total) % total);
     },
-    [total]
+    [total],
   );
 
   const handleTouchStart = (event: TouchEvent) => {
@@ -39,17 +42,21 @@ export function MenuCarousel() {
     >
       <div className="container-imperial">
         <h2 className="mb-3 text-center font-display text-3xl uppercase tracking-widest text-primary md:text-5xl">
-          Menu
+          {t("home.menuTitle")}
         </h2>
         <p className="mb-10 text-center font-body text-sm uppercase tracking-widest text-on-surface-variant md:mb-14">
-          {current.section} — стр. {current.page} из {total}
+          {t("home.menuPageStatus", {
+            section: pick(current.section, locale),
+            page: index + 1,
+            total,
+          })}
         </p>
 
         <div className="relative mx-auto flex max-w-md items-center gap-2 sm:max-w-lg md:max-w-xl">
           <button
             type="button"
             onClick={() => goTo(index - 1)}
-            aria-label="Предыдущая страница меню"
+            aria-label={t("home.menuPrev")}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary/40 text-primary transition-colors hover:bg-primary/10 sm:h-12 sm:w-12"
           >
             <ChevronLeftIcon className="h-5 w-5" />
@@ -63,7 +70,10 @@ export function MenuCarousel() {
             <Image
               key={current.src}
               src={current.src}
-              alt={`Страница меню ${current.page}: ${current.section}`}
+              alt={t("home.menuGoTo", {
+                page: index + 1,
+                section: pick(current.section, locale),
+              })}
               fill
               sizes="(min-width: 768px) 576px, 90vw"
               className="object-contain"
@@ -74,7 +84,7 @@ export function MenuCarousel() {
           <button
             type="button"
             onClick={() => goTo(index + 1)}
-            aria-label="Следующая страница меню"
+            aria-label={t("home.menuNext")}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary/40 text-primary transition-colors hover:bg-primary/10 sm:h-12 sm:w-12"
           >
             <ChevronRightIcon className="h-5 w-5" />
@@ -87,7 +97,10 @@ export function MenuCarousel() {
               key={page.page}
               type="button"
               onClick={() => goTo(i)}
-              aria-label={`Перейти к странице ${page.page}: ${page.section}`}
+              aria-label={t("home.menuGoTo", {
+                page: i + 1,
+                section: pick(page.section, locale),
+              })}
               aria-current={i === index}
               className={
                 i === index
@@ -95,13 +108,7 @@ export function MenuCarousel() {
                   : "relative h-14 w-10 shrink-0 overflow-hidden rounded-sm border border-outline-variant/40 opacity-60 transition-opacity hover:opacity-100 sm:h-16 sm:w-12"
               }
             >
-              <Image
-                src={page.src}
-                alt=""
-                fill
-                sizes="48px"
-                className="object-cover"
-              />
+              <Image src={page.src} alt="" fill sizes="48px" className="object-cover" />
             </button>
           ))}
         </div>

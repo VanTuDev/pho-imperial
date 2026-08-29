@@ -3,18 +3,20 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/store/cart-store";
+import { useTranslations } from "@/i18n/provider";
+import { LanguageToggle } from "@/components/ui/language-toggle";
 import { CloseIcon, MenuIcon, ShoppingBagIcon } from "./icons";
 
 const navLinks = [
-  { href: "/order", label: "Menu" },
-  { href: "#about", label: "About Us" },
-  { href: "#locations", label: "Locations" },
-  { href: "#contact", label: "Contact" },
+  { href: "/order", key: "nav.menu" as const },
+  { href: "/#about", key: "nav.about" as const },
+  { href: "/#contact", key: "nav.contact" as const },
 ];
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { totalItems } = useCart();
+  const t = useTranslations();
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-outline-variant/30 bg-background/90 backdrop-blur-md">
@@ -25,7 +27,7 @@ export function SiteHeader() {
           className="flex h-10 w-10 items-center justify-center text-primary transition-opacity hover:opacity-80 md:hidden"
           aria-expanded={isMenuOpen}
           aria-controls="mobile-nav"
-          aria-label="Открыть меню навигации"
+          aria-label={t("header.openMenu")}
         >
           {isMenuOpen ? (
             <CloseIcon className="h-6 w-6" />
@@ -34,9 +36,9 @@ export function SiteHeader() {
           )}
         </button>
 
-        <nav className="hidden gap-gutter md:flex">
+        <nav className="hidden items-center gap-gutter md:flex">
           {navLinks.map((link, index) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className={
@@ -45,8 +47,8 @@ export function SiteHeader() {
                   : "font-body text-xs font-semibold uppercase tracking-widest text-on-surface-variant transition-colors duration-300 hover:text-primary-fixed-dim"
               }
             >
-              {link.label}
-            </a>
+              {t(link.key)}
+            </Link>
           ))}
         </nav>
 
@@ -57,18 +59,21 @@ export function SiteHeader() {
           Phở Imperial
         </Link>
 
-        <Link
-          href="/order"
-          className="relative flex h-10 w-10 items-center justify-center text-primary transition-opacity hover:opacity-80"
-          aria-label="Корзина заказа"
-        >
-          <ShoppingBagIcon className="h-6 w-6" />
-          {totalItems > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-on-primary">
-              {totalItems}
-            </span>
-          )}
-        </Link>
+        <div className="flex items-center gap-3">
+          <LanguageToggle className="hidden md:flex" />
+          <Link
+            href="/cart"
+            className="relative flex h-10 w-10 items-center justify-center text-primary transition-opacity hover:opacity-80"
+            aria-label={t("header.cart")}
+          >
+            <ShoppingBagIcon className="h-6 w-6" />
+            {totalItems > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-on-primary">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
 
       {isMenuOpen && (
@@ -77,15 +82,18 @@ export function SiteHeader() {
           className="flex flex-col gap-1 border-t border-outline-variant/30 bg-surface-container-lowest px-margin-mobile py-4 md:hidden"
         >
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setIsMenuOpen(false)}
               className="py-2 font-body text-xs font-semibold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary"
             >
-              {link.label}
-            </a>
+              {t(link.key)}
+            </Link>
           ))}
+          <div className="mt-3 border-t border-outline-variant/20 pt-3">
+            <LanguageToggle />
+          </div>
         </nav>
       )}
     </header>

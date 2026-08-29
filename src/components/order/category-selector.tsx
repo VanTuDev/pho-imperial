@@ -1,18 +1,19 @@
 "use client";
 
-import type { Category } from "@/data/menu";
-import { categories } from "@/data/menu";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { categories, type CategoryId } from "@/data/menu";
+import { useI18n } from "@/i18n/provider";
+import { pick } from "@/i18n/localized";
 
 interface Props {
-  active: Category;
-  onChange: (cat: Category) => void;
+  active: CategoryId;
+  onChange: (id: CategoryId) => void;
 }
 
 export function CategorySelector({ active, onChange }: Props) {
+  const { locale } = useI18n();
   const activeRef = useRef<HTMLButtonElement>(null);
 
-  /* scroll active chip into view on mount / change */
   useEffect(() => {
     activeRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -22,22 +23,24 @@ export function CategorySelector({ active, onChange }: Props) {
   }, [active]);
 
   return (
-    <nav className="sticky top-16 z-40 -mx-[20px] w-[calc(100%+40px)] overflow-x-auto border-b border-outline-variant/20 bg-surface/95 px-[20px] py-6 shadow-lg backdrop-blur-md hide-scrollbar">
-      <ul className="flex min-w-max gap-4 px-4">
-        {categories.map((cat) => {
-          const isActive = cat === active;
+    <nav className="sticky top-16 z-40 -mx-margin-mobile overflow-x-auto border-b border-outline-variant/20 bg-surface/95 px-margin-mobile py-4 shadow-lg backdrop-blur-md hide-scrollbar">
+      <ul className="mx-auto flex min-w-max gap-3 md:justify-center">
+        {categories.map((category) => {
+          const isActive = category.id === active;
           return (
-            <li key={cat}>
+            <li key={category.id}>
               <button
                 ref={isActive ? activeRef : undefined}
-                onClick={() => onChange(cat)}
+                type="button"
+                onClick={() => onChange(category.id)}
+                aria-pressed={isActive}
                 className={
                   isActive
-                    ? "rounded-full bg-primary px-6 py-2 font-body text-base font-bold uppercase tracking-widest text-on-primary shadow-md"
-                    : "rounded-full border border-outline-variant/30 bg-surface-container-low px-6 py-2 font-body text-base uppercase tracking-widest text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
+                    ? "rounded-full bg-primary px-5 py-2 font-body text-sm font-bold uppercase tracking-widest text-on-primary shadow-md"
+                    : "rounded-full border border-outline-variant/30 bg-surface-container-low px-5 py-2 font-body text-sm uppercase tracking-widest text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
                 }
               >
-                {cat}
+                {pick(category.label, locale)}
               </button>
             </li>
           );

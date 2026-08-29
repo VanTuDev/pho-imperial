@@ -103,6 +103,14 @@ export function MinusIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function CheckIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} {...props}>
+      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function TrashIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} {...props}>
