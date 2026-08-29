@@ -3,14 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { GoogleLogin } from "@react-oauth/google";
-import { Alert, Button, Divider, Form, Input, Typography } from "antd";
-import { login, loginGoogle } from "@/lib/admin-api";
+import { Alert, Button, Form, Input, Typography } from "antd";
+import { login } from "@/lib/admin-api";
 import { useI18n } from "@/i18n/provider";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useAdminAuth } from "@/components/admin/admin-auth";
-
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -94,30 +91,6 @@ export default function AdminLoginPage() {
               {t("admin.login.signIn")}
             </Button>
           </Form>
-
-          {GOOGLE_CLIENT_ID && (
-            <>
-              <Divider plain>{t("admin.login.or")}</Divider>
-              <div className="flex justify-center">
-                <GoogleLogin
-                  theme="filled_black"
-                  text="signin_with"
-                  onSuccess={async (cred) => {
-                    if (!cred.credential) return;
-                    setError(null);
-                    try {
-                      const admin = await loginGoogle(cred.credential);
-                      setAdmin(admin);
-                      router.replace("/admin");
-                    } catch (err) {
-                      setError(err instanceof Error ? err.message : t("admin.login.googleFailed"));
-                    }
-                  }}
-                  onError={() => setError(t("admin.login.googleFailed"))}
-                />
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>

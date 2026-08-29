@@ -37,12 +37,16 @@ export default function AdminsPage() {
 
   async function submitInvite() {
     if (!invite) return;
+    if (invite.password.length < 6) {
+      message.error(t("admin.admins.passwordHint"));
+      return;
+    }
     setSaving(true);
     try {
       await createAdmin({
         email: invite.email.trim(),
         name: invite.name.trim(),
-        password: invite.password || undefined,
+        password: invite.password,
       });
       setInvite(null);
       void load();
@@ -89,7 +93,6 @@ export default function AdminsPage() {
         render: (_, a) => (
           <Typography.Text type="secondary">
             {a.email}
-            {a.googleId && " · Google"}
             {a.lastLoginAt &&
               ` · ${t("admin.admins.lastLogin", {
                 date: new Date(a.lastLoginAt).toLocaleDateString(locale),
@@ -180,8 +183,8 @@ export default function AdminsPage() {
                 onChange={(e) => setInvite({ ...invite, name: e.target.value })}
               />
             </Form.Item>
-            <Form.Item label={t("admin.admins.password")}>
-              <Input
+            <Form.Item label={t("admin.admins.password")} help={t("admin.admins.passwordHint")}>
+              <Input.Password
                 value={invite.password}
                 onChange={(e) => setInvite({ ...invite, password: e.target.value })}
               />

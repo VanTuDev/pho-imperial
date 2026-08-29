@@ -32,7 +32,6 @@ export interface AdminUser {
   name: string;
   role: "owner" | "admin";
   active: boolean;
-  googleId: string | null;
   lastLoginAt: string | null;
   createdAt: string;
 }
@@ -115,7 +114,6 @@ function normUser(r: Raw): AdminUser {
     name: String(r.name ?? ""),
     role: r.role === "owner" ? "owner" : "admin",
     active: r.active !== false,
-    googleId: r.googleId ? String(r.googleId) : null,
     lastLoginAt: r.lastLoginAt ? String(r.lastLoginAt) : null,
     createdAt: String(r.createdAt ?? ""),
   };
@@ -224,16 +222,6 @@ export function login(email: string, password: string): Promise<AdminUser> {
     const { data } = await http.post<{ token: string; admin: Raw }>("/api/auth/login", {
       email,
       password,
-    });
-    setToken(data.token);
-    return normUser(data.admin);
-  });
-}
-
-export function loginGoogle(credential: string): Promise<AdminUser> {
-  return call("Google-вход не удался", async () => {
-    const { data } = await http.post<{ token: string; admin: Raw }>("/api/auth/google", {
-      credential,
     });
     setToken(data.token);
     return normUser(data.admin);
@@ -418,7 +406,7 @@ export function listAdmins(): Promise<AdminUser[]> {
 export function createAdmin(input: {
   email: string;
   name: string;
-  password?: string;
+  password: string;
 }): Promise<AdminUser> {
   return call("Не удалось добавить администратора", async () => {
     const { data } = await http.post<{ admin: Raw }>("/api/admins", input);
