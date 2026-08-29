@@ -265,7 +265,7 @@ export function CartPageClient() {
                   value={orderNote}
                   onChange={(e) => setOrderNote(e.target.value)}
                   placeholder={t("cart.notePlaceholder")}
-                  className="w-full resize-none rounded-xl border border-outline-variant/40 bg-surface-container px-4 py-3 font-body text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none"
+                  className="w-full resize-none rounded-xl border border-outline-variant/40 bg-surface-container px-4 py-3 font-body text-base text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none"
                 />
               </div>
 

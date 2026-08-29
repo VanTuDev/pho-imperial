@@ -54,11 +54,53 @@
   --radius-none: 0px;
 }
 
+html {
+  /* Stop Safari from inflating text on rotate / in landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Never allow the page to be wider than the screen (kills zoom-out + sideways drag). */
+  overflow-x: clip;
+}
+
 body {
   background: var(--color-background);
   color: var(--color-on-background);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  /* No rubber-band / pull-to-refresh — feels like an app. */
+  overscroll-behavior-y: none;
+  /* Kill the grey tap flash and the double-tap-to-zoom delay. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* iOS zooms the whole page in when you focus a field smaller than 16px.
+   Force 16px on phones so tapping an input never zooms. */
+@media (max-width: 640px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* App-like: no long-press "callout" menu, no accidental text selection on controls. */
+button,
+a,
+[role="button"],
+label {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+input,
+textarea,
+[contenteditable],
+p,
+h1, h2, h3 {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .container-imperial {

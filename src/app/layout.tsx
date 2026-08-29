@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { EB_Garamond, Manrope } from "next/font/google";
 import { CartProvider } from "@/store/cart-store";
@@ -25,12 +25,33 @@ async function getLocale(): Promise<Locale> {
   return isLocale(value) ? value : defaultLocale;
 }
 
+/**
+ * Lock the viewport so the site behaves like a native app on phones:
+ * no pinch-zoom, no double-tap zoom, and no iOS "zoom into the focused field".
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#131313",
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   return {
     title: "BunPho — Вьетнамская кухня",
     description: dict.home.heroTagline,
+    applicationName: "BunPho",
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+      capable: true,
+      title: "BunPho",
+      statusBarStyle: "black-translucent",
+    },
+    formatDetection: { telephone: false, address: false, email: false },
   };
 }
 

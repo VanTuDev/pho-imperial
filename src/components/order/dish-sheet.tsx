@@ -181,7 +181,7 @@ function DishSheetInner({ dish, onClose }: { dish: MenuItem; onClose: () => void
                 onChange={(e) => setNote(e.target.value)}
                 rows={2}
                 placeholder={t("dish.commentPlaceholder")}
-                className="w-full resize-none rounded-xl border border-outline-variant/40 bg-surface-container px-4 py-3 font-body text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none"
+                className="w-full resize-none rounded-xl border border-outline-variant/40 bg-surface-container px-4 py-3 font-body text-base text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none"
               />
             </div>
           </div>
