@@ -7,11 +7,14 @@ import { useCart } from "@/store/cart-store";
 import { useI18n } from "@/i18n/provider";
 import { pick } from "@/i18n/localized";
 import { formatPrice } from "@/i18n/format";
+import { createOrder } from "@/lib/api";
 import { addOrderId } from "@/lib/order-history";
 import { PageHeader } from "@/components/page-header";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import { DishImage } from "@/components/order/dish-image";
 import { TrashIcon } from "@/components/icons";
+
+const TABLE_CODE_RE = /^[\w-]{1,40}$/;
 
 export function CartPageClient() {
   const router = useRouter();
@@ -21,11 +24,16 @@ export function CartPageClient() {
     totalItems,
     totalPrice,
     table,
+    tableLabel,
+    customerName,
+    customerPhone,
     orderNote,
     hydrated,
+    menuLoaded,
     setQuantity,
     removeLine,
     setTable,
+    setContact,
     setOrderNote,
     clearCart,
   } = useCart();
@@ -35,20 +43,21 @@ export function CartPageClient() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Prefill the table field once the cart hydrates with a known table number.
+  // Prefill the table field once the cart hydrates with a known table code.
   const [syncedTable, setSyncedTable] = useState<string | null>(null);
   if (table !== syncedTable) {
     setSyncedTable(table);
     if (table) setTableInput(table);
   }
 
-  const tableValid = /^\w{1,8}$/.test((table ?? "").trim());
+  const tableValid = TABLE_CODE_RE.test((table ?? "").trim());
   const showTableField = editingTable || !table;
+  const ready = hydrated && menuLoaded;
 
   function commitTable() {
-    const value = tableInput.trim();
-    if (/^\w{1,8}$/.test(value)) {
-      setTable(value);
+    const value = tableInput.trim().toLowerCase();
+    if (TABLE_CODE_RE.test(value)) {
+      setTable(value, { label: null, type: null });
       setEditingTable(false);
       setError(null);
     }
@@ -59,22 +68,20 @@ export function CartPageClient() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          table,
-          note: orderNote,
-          items: lines.map((l) => ({
-            slug: l.slug,
-            variantId: l.variantId,
-            quantity: l.quantity,
-            note: l.note,
-          })),
-        }),
+      const order = await createOrder({
+        tableCode: (table ?? "").trim().toLowerCase(),
+        customer: {
+          name: customerName.trim() || undefined,
+          phone: customerPhone.trim() || undefined,
+        },
+        note: orderNote,
+        items: lines.map((l) => ({
+          menuItemId: l.menuItemId,
+          variantId: l.variantId,
+          quantity: l.quantity,
+          note: l.note,
+        })),
       });
-      if (!res.ok) throw new Error(String(res.status));
-      const order = (await res.json()) as { id: string };
       addOrderId(order.id);
       clearCart();
       router.push(`/orders/${order.id}`);
@@ -89,7 +96,7 @@ export function CartPageClient() {
       <PageHeader title={t("cart.title")} backHref="/order" />
 
       <main className="container-imperial px-margin-mobile py-6">
-        {!hydrated ? (
+        {!ready ? (
           <div className="space-y-4">
             {[0, 1].map((i) => (
               <div
@@ -110,18 +117,14 @@ export function CartPageClient() {
                   className="flex gap-4 rounded-2xl border border-outline-variant/40 bg-surface-container-low p-4"
                 >
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl">
-                    <DishImage
-                      dish={line.dish}
-                      locale={locale}
-                      sizes="80px"
-                    />
+                    <DishImage dish={line.item} locale={locale} sizes="80px" />
                   </div>
 
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-display text-lg leading-tight text-primary">
-                          {pick(line.dish.name, locale)}
+                          {pick(line.item.name, locale)}
                           {line.variant && (
                             <span className="text-on-surface-variant">
                               {" · "}
@@ -171,7 +174,7 @@ export function CartPageClient() {
                 {!showTableField ? (
                   <div className="flex items-center justify-between gap-3">
                     <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 font-body text-sm font-semibold text-primary">
-                      {t("cart.tableChip", { table: table! })}
+                      {t("cart.tableChip", { table: tableLabel ?? table! })}
                     </span>
                     <button
                       type="button"
@@ -191,7 +194,6 @@ export function CartPageClient() {
                     </label>
                     <input
                       id="table-number"
-                      inputMode="numeric"
                       value={tableInput}
                       onChange={(e) => setTableInput(e.target.value)}
                       onBlur={commitTable}
@@ -211,6 +213,42 @@ export function CartPageClient() {
                     )}
                   </div>
                 )}
+              </div>
+
+              {/* Contact (optional) */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="customer-name"
+                    className="mb-1.5 block font-body text-xs font-bold uppercase tracking-widest text-primary"
+                  >
+                    {t("cart.nameLabel")}
+                  </label>
+                  <input
+                    id="customer-name"
+                    value={customerName}
+                    onChange={(e) => setContact({ name: e.target.value })}
+                    placeholder={t("cart.namePlaceholder")}
+                    className="w-full rounded-xl border border-outline-variant/40 bg-surface-container px-4 py-3 font-body text-base text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="customer-phone"
+                    className="mb-1.5 block font-body text-xs font-bold uppercase tracking-widest text-primary"
+                  >
+                    {t("cart.phoneLabel")}
+                  </label>
+                  <input
+                    id="customer-phone"
+                    type="tel"
+                    inputMode="tel"
+                    value={customerPhone}
+                    onChange={(e) => setContact({ phone: e.target.value })}
+                    placeholder={t("cart.phonePlaceholder")}
+                    className="w-full rounded-xl border border-outline-variant/40 bg-surface-container px-4 py-3 font-body text-base text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none"
+                  />
+                </div>
               </div>
 
               {/* Order comment */}

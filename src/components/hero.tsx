@@ -21,7 +21,7 @@ export function Hero() {
 
       <div className="ornamental-border relative z-10 mx-4 flex flex-col items-center bg-surface-container-lowest/60 p-8 text-center backdrop-blur-sm">
         <h1 className="gold-shimmer mb-4 font-display text-4xl uppercase tracking-widest text-primary md:text-6xl">
-          Phở Imperial
+          BunPho
         </h1>
         <p className="max-w-lg font-display text-xl tracking-wide text-on-surface-variant md:text-2xl">
           {t("home.heroTagline")}

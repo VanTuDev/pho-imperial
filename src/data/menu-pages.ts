@@ -6,7 +6,7 @@ export interface MenuPage {
   section: Localized;
 }
 
-const section = (en: string, fr: string): Localized => ({ en, fr });
+const section = (ru: string, en: string, vi: string): Localized => ({ ru, en, vi });
 
 /**
  * Scanned pages of the physical restaurant menu (public/Menu/*.png).
@@ -14,16 +14,16 @@ const section = (en: string, fr: string): Localized => ({ en, fr });
  * both are excluded here. `page` keeps the original numbering.
  */
 export const menuPages: MenuPage[] = [
-  { page: 1, src: "/Menu/1.png", section: section("Soup", "Soupe") },
-  { page: 2, src: "/Menu/2.png", section: section("Soup", "Soupe") },
-  { page: 3, src: "/Menu/3.png", section: section("Rice noodles", "Nouilles de riz") },
-  { page: 4, src: "/Menu/4.png", section: section("Rice dishes", "Plats de riz") },
-  { page: 5, src: "/Menu/5.png", section: section("Rice dishes", "Plats de riz") },
-  { page: 6, src: "/Menu/6.png", section: section("Wok noodles", "Nouilles au wok") },
-  { page: 7, src: "/Menu/7.png", section: section("Wok noodles", "Nouilles au wok") },
-  { page: 9, src: "/Menu/9.png", section: section("Spring rolls", "Rouleaux de printemps") },
-  { page: 10, src: "/Menu/10.png", section: section("Smoothies & coffee", "Smoothies et café") },
-  { page: 11, src: "/Menu/11.png", section: section("Milk tea", "Thé au lait") },
-  { page: 12, src: "/Menu/12.png", section: section("Snacks", "En-cas") },
-  { page: 13, src: "/Menu/13.png", section: section("More dishes", "Autres plats") },
+  { page: 1, src: "/Menu/1.png", section: section("Супы", "Soup", "Món nước") },
+  { page: 2, src: "/Menu/2.png", section: section("Супы", "Soup", "Món nước") },
+  { page: 3, src: "/Menu/3.png", section: section("Рисовая лапша", "Rice noodles", "Bún, phở") },
+  { page: 4, src: "/Menu/4.png", section: section("Блюда с рисом", "Rice dishes", "Món cơm") },
+  { page: 5, src: "/Menu/5.png", section: section("Блюда с рисом", "Rice dishes", "Món cơm") },
+  { page: 6, src: "/Menu/6.png", section: section("Лапша вок", "Wok noodles", "Mì xào") },
+  { page: 7, src: "/Menu/7.png", section: section("Лапша вок", "Wok noodles", "Mì xào") },
+  { page: 9, src: "/Menu/9.png", section: section("Спринг-роллы", "Spring rolls", "Nem, gỏi cuốn") },
+  { page: 10, src: "/Menu/10.png", section: section("Смузи и кофе", "Smoothies & coffee", "Sinh tố & cà phê") },
+  { page: 11, src: "/Menu/11.png", section: section("Молочный чай", "Milk tea", "Trà sữa") },
+  { page: 12, src: "/Menu/12.png", section: section("Закуски", "Snacks", "Ăn vặt") },
+  { page: 13, src: "/Menu/13.png", section: section("Другие блюда", "More dishes", "Món khác") },
 ];

@@ -9,13 +9,13 @@ import "./globals.css";
 
 const ebGaramond = EB_Garamond({
   variable: "--font-eb-garamond",
-  subsets: ["latin", "vietnamese"],
+  subsets: ["latin", "vietnamese", "cyrillic"],
   weight: ["400", "500", "600", "700"],
 });
 
 const manrope = Manrope({
   variable: "--font-manrope",
-  subsets: ["latin", "vietnamese"],
+  subsets: ["latin", "vietnamese", "cyrillic"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   return {
-    title: "PHỞ IMPERIAL — Premium Vietnamese Cuisine",
+    title: "BunPho — Вьетнамская кухня",
     description: dict.home.heroTagline,
   };
 }

@@ -56,7 +56,7 @@ export function SiteHeader() {
           href="/"
           className="font-display text-xl uppercase tracking-widest text-primary md:absolute md:left-1/2 md:-translate-x-1/2"
         >
-          Phở Imperial
+          BunPho
         </Link>
 
         <div className="flex items-center gap-3">

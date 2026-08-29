@@ -4,25 +4,29 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/i18n/provider";
 import { formatPrice } from "@/i18n/format";
+import { getOrder } from "@/lib/api";
 import { getOrderIds } from "@/lib/order-history";
+import type { OrderStatus } from "@/lib/types";
 import { SiteHeader } from "@/components/site-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { ArrowForwardIcon } from "@/components/icons";
-import type { OrderStatus } from "@/server/order-store";
 
 interface OrderSummary {
   id: string;
-  table: string;
+  orderNumber: number;
+  tableLabel: string;
   total: number;
   status: OrderStatus;
   itemCount: number;
 }
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
-  new: "bg-primary text-on-primary",
-  cooking: "bg-secondary text-on-secondary",
+  pending: "bg-primary text-on-primary",
+  confirmed: "bg-secondary text-on-secondary",
+  preparing: "bg-secondary text-on-secondary",
   ready: "bg-tertiary text-on-tertiary",
   served: "bg-surface-container-high text-on-surface-variant",
+  cancelled: "bg-error-container text-on-error",
 };
 
 export function OrdersListClient() {
@@ -34,18 +38,12 @@ export function OrdersListClient() {
     Promise.all(
       getOrderIds().map(async (id): Promise<OrderSummary | null> => {
         try {
-          const res = await fetch(`/api/orders/${id}`, { cache: "no-store" });
-          if (!res.ok) return null;
-          const order = (await res.json()) as {
-            id: string;
-            table: string;
-            total: number;
-            status: OrderStatus;
-            items: { quantity: number }[];
-          };
+          const order = await getOrder(id);
+          if (!order) return null;
           return {
             id: order.id,
-            table: order.table,
+            orderNumber: order.orderNumber,
+            tableLabel: order.table.label,
             total: order.total,
             status: order.status,
             itemCount: order.items.reduce((s, i) => s + i.quantity, 0),
@@ -103,8 +101,8 @@ export function OrdersListClient() {
                   <div className="min-w-0">
                     <p className="font-body text-sm text-on-surface">
                       {t("orders.tableAndNumber", {
-                        table: order.table,
-                        number: order.id,
+                        table: order.tableLabel,
+                        number: String(order.orderNumber),
                       })}
                     </p>
                     <p className="font-body text-xs text-on-surface-variant">

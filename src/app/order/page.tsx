@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const value = store.get(LOCALE_COOKIE)?.value;
   const dict = getDictionary(isLocale(value) ? value : defaultLocale);
   return {
-    title: `${dict.menu.title} | PHỞ IMPERIAL`,
+    title: `${dict.menu.title} | BunPho`,
     description: dict.menu.subtitle,
   };
 }

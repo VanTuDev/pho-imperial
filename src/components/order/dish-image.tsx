@@ -1,10 +1,10 @@
 import Image from "next/image";
-import type { Dish } from "@/data/menu";
+import type { MenuItem } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
 import { pick } from "@/i18n/localized";
 
 interface Props {
-  dish: Dish;
+  dish: MenuItem;
   locale: Locale;
   sizes: string;
   className?: string;

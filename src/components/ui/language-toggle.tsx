@@ -3,8 +3,8 @@
 import { locales, type Locale } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 
-const labels: Record<Locale, string> = { en: "EN", fr: "FR" };
-const full: Record<Locale, string> = { en: "English", fr: "Français" };
+const labels: Record<Locale, string> = { ru: "RU", en: "EN", vi: "VI" };
+const full: Record<Locale, string> = { ru: "Русский", en: "English", vi: "Tiếng Việt" };
 
 export function LanguageToggle({ className = "" }: { className?: string }) {
   const { locale, setLocale, t } = useI18n();

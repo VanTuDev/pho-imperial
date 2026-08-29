@@ -17,7 +17,7 @@ export function SiteFooter() {
       id="contact"
       className="container-imperial flex w-full flex-col items-start gap-gutter border-t border-outline-variant px-margin-mobile py-12 md:flex-row md:justify-between md:px-section"
     >
-      <div className="font-display text-2xl text-primary">Phở Imperial</div>
+      <div className="font-display text-2xl text-primary">BunPho</div>
       <div className="font-body text-sm text-primary-fixed-dim">
         {t("footer.rights", { year: new Date().getFullYear() })}
       </div>

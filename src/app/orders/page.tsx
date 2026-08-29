@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const store = await cookies();
   const value = store.get(LOCALE_COOKIE)?.value;
   const dict = getDictionary(isLocale(value) ? value : defaultLocale);
-  return { title: `${dict.orders.title} | PHỞ IMPERIAL` };
+  return { title: `${dict.orders.title} | BunPho` };
 }
 
 export default function OrdersPage() {

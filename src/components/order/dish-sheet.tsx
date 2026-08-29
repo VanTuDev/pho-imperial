@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import type { Dish } from "@/data/menu";
-import { defaultVariant, unitPrice } from "@/data/menu";
+import type { MenuItem } from "@/lib/types";
+import { defaultVariant, unitPrice } from "@/lib/menu-utils";
 import { useCart } from "@/store/cart-store";
 import { useI18n } from "@/i18n/provider";
 import { pick } from "@/i18n/localized";
@@ -12,15 +12,15 @@ import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import { DishImage } from "./dish-image";
 
 interface Props {
-  dish: Dish | null;
+  dish: MenuItem | null;
   onClose: () => void;
 }
 
 export function DishSheet({ dish, onClose }: Props) {
-  return dish ? <DishSheetInner key={dish.slug} dish={dish} onClose={onClose} /> : null;
+  return dish ? <DishSheetInner key={dish.id} dish={dish} onClose={onClose} /> : null;
 }
 
-function DishSheetInner({ dish, onClose }: { dish: Dish; onClose: () => void }) {
+function DishSheetInner({ dish, onClose }: { dish: MenuItem; onClose: () => void }) {
   const { locale, t } = useI18n();
   const { addLine } = useCart();
   const titleId = useId();
@@ -50,7 +50,8 @@ function DishSheetInner({ dish, onClose }: { dish: Dish; onClose: () => void }) 
   const price = unitPrice(dish, variantId) * quantity;
 
   function handleAdd() {
-    addLine({ slug: dish.slug, variantId, quantity, note: note.trim() });
+    if (!dish.available) return;
+    addLine({ menuItemId: dish.id, variantId, quantity, note: note.trim() });
     onClose();
   }
 
@@ -192,9 +193,12 @@ function DishSheetInner({ dish, onClose }: { dish: Dish; onClose: () => void }) 
           <button
             type="button"
             onClick={handleAdd}
-            className="flex flex-1 items-center justify-center rounded-full bg-primary px-6 py-4 font-body text-sm font-bold uppercase tracking-wider text-on-primary shadow-lg transition-colors hover:bg-primary-fixed"
+            disabled={!dish.available}
+            className="flex flex-1 items-center justify-center rounded-full bg-primary px-6 py-4 font-body text-sm font-bold uppercase tracking-wider text-on-primary shadow-lg transition-colors hover:bg-primary-fixed disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {t("dish.addWithPrice", { price: formatPrice(price, locale) })}
+            {dish.available
+              ? t("dish.addWithPrice", { price: formatPrice(price, locale) })
+              : t("menu.unavailable")}
           </button>
         </div>
       </div>

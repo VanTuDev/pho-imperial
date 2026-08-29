@@ -1,8 +1,8 @@
-export const locales = ["en", "fr"] as const;
+export const locales = ["ru", "en", "vi"] as const;
 
 export type Locale = (typeof locales)[number];
 
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "ru";
 
 /** Cookie that persists the guest's language choice across visits. */
 export const LOCALE_COOKIE = "pho_locale";
@@ -34,6 +34,7 @@ export function resolveLocale(acceptLanguage: string | null | undefined): Locale
 
 /** BCP-47 tag used for `Intl` formatters. */
 export const intlLocale: Record<Locale, string> = {
+  ru: "ru-RU",
   en: "en-US",
-  fr: "fr-FR",
+  vi: "vi-VN",
 };
